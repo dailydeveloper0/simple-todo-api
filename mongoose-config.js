@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongob://localhost:27017/simple_todo", {
+mongoose.connect("mongodb://localhost:27017/simple_todo", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 const taskSchema = new mongoose.Schema({
   title: String,
-  description: Text,
+  description: String,
   due_date: Date,
   completed: Boolean,
 });
