@@ -1,7 +1,7 @@
 export class Task {
   id: number;
-  title: String;
-  description: String;
+  title: string;
+  description: string;
   completed: boolean;
   createdAt: Date;
   updatedAt: Date;
