@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  private tasks: Task[] = [];
+  create(createTaskDto: CreateTaskDto): Task {
+    const task = new Task(createTaskDto);
+    this.tasks.push(task);
+    return task;
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  findAll(): Task[] {
+    return this.tasks;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  findOne(id: number): Task {
+    const task = this.tasks.find((t) => t.id === id);
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+    return task;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  update(id: number, updateTaskDto: UpdateTaskDto): Task {
+    const task = this.findOne(id);
+
+    Object.assign(task, updateTaskDto);
+    task.updatedAt = new Date();
+
+    return task;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} task`;
+    const index = this.tasks.findIndex((t) => t.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+    this.tasks.splice(index, 1);
+
+    return { message: `Task with ID ${id} deleted successfully` };
+  }
+
+  toggleComplete(id: number): Task {
+    const task = this.findOne(id)
+    task.completed = !task.completed
+    task.updatedAt = new Date()
+    return task
   }
 }
